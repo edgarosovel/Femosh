@@ -1,0 +1,55 @@
+#!/bin/bash
+dir_actual="$(cd "$(dirname "$0")" && pwd)"
+#Inclusión de scripts externos
+source "$dir_actual/subScripts/di.sh"
+source "$dir_actual/subScripts/l.sh" #ya
+source "$dir_actual/subScripts/cl.sh" #ya
+source "$dir_actual/subScripts/escribir.sh" #ya
+source "$dir_actual/subScripts/copiar.sh" #ya
+source "$dir_actual/subScripts/ir.sh" #ya
+source "$dir_actual/subScripts/renombrar.sh" #ya
+source "$dir_actual/subScripts/permisos.sh" #ya
+source "$dir_actual/subScripts/exe.sh" #ya
+source "$dir_actual/subScripts/crear.sh" #ya
+source "$dir_actual/subScripts/eliminar.sh" #ya
+source "$dir_actual/subScripts/ver.sh" #ya
+source "$dir_actual/subScripts/editar.sh" #ya
+source "$dir_actual/subScripts/procesos.sh" #ya
+source "$dir_actual/subScripts/cerrar.sh" #ya
+source "$dir_actual/subScripts/ayuda.sh" #ya
+source "$dir_actual/subScripts/salir.sh" #ya
+
+escribir negrita amarillo "\n 	Bienvenido a 𐊇𐌴𐊎𐊗𐊒·∫h: un pequeño pero poderoso shell\n\n"
+
+escribir negrita azul "𐊇𐌴𐊎𐊗𐊒·∫h ≡ "
+escribir negrita verde "`pwd`" 
+escribir negrita blanco " ➩ "
+
+while read comando datos
+do
+	eval "$comando $datos 2> $dir_actual/errores"
+	if [[ $? -ne 0 ]]; then
+		if [[ -d "$dir_actual/exe" ]]; then #revisa si el usuario ya creó algún ejecutable
+			estaComando=0
+			exes=( `ls "$dir_actual/exe" 2> $dir_actual/errores` )
+			for i in ${exes[@]}; do
+				if [ "$comando" == "$i" ]; then
+					estaComando=1
+					source "$dir_actual/exe/$comando" $datos
+					break
+				fi
+			done
+			if [[ estaComando -eq 0 ]]; then
+				echo "Comando «${comando}» no reconocido. Utilice «ayuda» para obter los comandos reconocidos"
+			fi
+		else
+			echo "Comando «${comando}» no reconocido. Utilice «ayuda» para obter los comandos reconocidos"
+		fi
+	fi
+	if [[ -e errores ]]; then
+		rm errores
+	fi
+	escribir negrita azul "𐊇𐌴𐊎𐊗𐊒·∫h ≡ "
+	escribir negrita verde "`pwd`" 
+	escribir negrita blanco " ➩ "
+done
